@@ -100,17 +100,17 @@
 //   );
 // }
 
+import React from "react";
+import Layout from "@/app/dashboard/page";
+import BooksList from "@/app/books/page";
+import "@fontsource/montserrat"; // Importa con pesos predeterminados
 
-import React from 'react';
-import Layout from './components/Layout/layout';
-
-const App: React.FC = () => {
+const HomePage = () => {
   return (
     <Layout>
-      <h1>Welcome to the Library Loan System</h1>
-      <p>Select an option from the sidebar to get started.</p>
+
     </Layout>
   );
 };
 
-export default App;
+export default HomePage;

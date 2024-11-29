@@ -33,10 +33,6 @@ const Layout: React.FC = ({ children }) => {
         <main className="content">
           {children}
         </main>
-
-        <footer className="footer">
-          <p>© 2024 BookLoans. All rights reserved.</p>
-        </footer>
       </div>
     </div>
   );
