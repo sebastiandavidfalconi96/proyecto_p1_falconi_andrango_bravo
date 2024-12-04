@@ -10,12 +10,21 @@ const getAllBooks = async (req, res) => {
 };
 
 const getBookById = async (req, res) => {
+  const { id } = req.params;
+
+  if (!isUuid(id)) {
+    return res.status(400).json({ error: "Invalid ID format" });
+  }
+
   try {
-    const book = await bookService.getBookById(req.params.id);
-    if (!book) return res.status(404).json({ error: 'Libro no encontrado' });
+    const book = await getBookByIdService(id);
+    if (!book) {
+      return res.status(404).json({ error: "Book not found" });
+    }
     res.json(book);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error fetching book by ID:", error);
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
@@ -65,6 +74,34 @@ const returnBook = async (req, res) => {
   }
 };
 
+const searchBooks = async (req, res) => {
+  try {
+    const { titulo, categoria, rangoInicio, rangoFin } = req.query;
+
+    if ((rangoInicio && isNaN(parseInt(rangoInicio))) || (rangoFin && isNaN(parseInt(rangoFin)))) {
+      return res.status(400).json({ error: "Invalid range values." });
+    }
+
+    const results = await bookService.searchBooks({ titulo, categoria, rangoInicio, rangoFin });
+    res.json(results);
+  } catch (error) {
+    console.error("Error searching books:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+const checkBookAvailability = async (req, res) => {
+  try {
+    const book = await bookService.getBookAvailability(req.params.id);
+    if (!book) return res.status(404).json({ error: 'Libro no encontrado' });
+    res.json(book);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getAllBooks,
   getBookById,
@@ -73,4 +110,6 @@ module.exports = {
   deleteBook,
   rentBook,
   returnBook,
+  searchBooks,
+  checkBookAvailability,
 };

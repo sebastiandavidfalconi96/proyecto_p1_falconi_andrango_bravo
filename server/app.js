@@ -3,6 +3,7 @@ const cors = require('cors'); // Importar cors
 const { connectDB, sequelize } = require('./config/database');
 const userRoutes = require('./routes/user.routes');
 const bookRoutes = require('./routes/book.routes');
+const { createDefaultBooks } = require('./services/book.service');
 
 const app = express();
 
@@ -30,6 +31,17 @@ const main = async () => {
     } catch (error) {
         console.error('Error al sincronizar las tablas:', error);
     }
+    const initializeDefaults = async () => {
+        try {
+            console.log('Creando libros por defecto...');
+            await createDefaultBooks();
+            console.log('Libros por defecto creados con éxito.');
+        } catch (error) {
+            console.error('Error al crear libros por defecto:', error.message);
+        }
+    };
+
+    initializeDefaults();
 };
 
 main();

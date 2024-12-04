@@ -27,6 +27,15 @@ const Book = sequelize.define('Book', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  category: {
+    type: DataTypes.STRING, // Agregado para categoría
+  },
+  publicationYear: {
+    type: DataTypes.INTEGER, // Agregado para rango de años
+  },
+  location: {
+    type: DataTypes.STRING, // Agregado para ubicación
+  },
 }, {
   tableName: 'books',
   timestamps: true,
