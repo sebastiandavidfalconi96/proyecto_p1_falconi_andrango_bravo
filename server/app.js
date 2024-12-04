@@ -41,7 +41,7 @@ const main = async () => {
         }
     };
 
-    initializeDefaults();
+    // initializeDefaults();
 };
 
 main();
