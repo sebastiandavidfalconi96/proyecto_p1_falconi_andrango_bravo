@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { ReactNode } from "react";
 import './layout.css'; // Asegúrate de tener un archivo CSS para estilos básicos.
 
-const Layout: React.FC = ({ children }) => {
+interface LayoutProps {
+  children: ReactNode; // Acepta elementos React como hijos
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="layout">
       {/* Sidebar */}
