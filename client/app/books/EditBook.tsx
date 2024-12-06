@@ -19,7 +19,7 @@ const EditBook = ({ bookId }) => {
   useEffect(() => {
     const fetchBookData = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/api/books/${bookId}`);
+        const response = await axios.get(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`);
         setBookData(response.data);
       } catch (err) {
         setError("No se pudo obtener la información del libro.");
@@ -40,7 +40,7 @@ const EditBook = ({ bookId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:4000/api/books/${bookId}`, bookData);
+      const response = await axios.put(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`, bookData);
       setSuccessMessage("Libro actualizado con éxito");
       // Optionally, redirect or update the page
       router.push("/books");
