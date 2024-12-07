@@ -32,8 +32,10 @@ const Login = () => {
       });
 
       if (response.data.success) {
-        alert("Inicio de sesión exitoso!");
+        const { userType } = response.data.user; // Captura el userType
         localStorage.setItem("token", response.data.token); // Guarda el token
+        localStorage.setItem("userType", userType);
+        localStorage.setItem("email", email);
         router.push("/dashboard"); // Redirige al dashboard
       } else {
         setError("Correo o contraseña incorrectos.");
