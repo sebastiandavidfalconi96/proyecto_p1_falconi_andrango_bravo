@@ -17,7 +17,7 @@ const BooksList = () => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search", {
+      const response = await axios.get("http://localhost:4000/api/books/search", {
         params: {
           titulo: filters.titulo || undefined,
           categoria: filters.categoria || undefined,
@@ -83,6 +83,9 @@ const BooksList = () => {
             <option value="No Ficción">No Ficción</option>
             <option value="Ciencia">Ciencia</option>
             <option value="Historia">Historia</option>
+            <option value="Romance">Romance</option>
+            <option value="Filosofía">Filosofía</option>
+            <option value="Clásicos">Clásicos</option>
           </select>
           <button
             onClick={handleSearchClick}
@@ -98,7 +101,7 @@ const BooksList = () => {
             <Card key={book.id} className="shadow-sm hover:shadow-md transition">
               <CardHeader>
                 <img
-                  src={book.image || "https://via.placeholder.com/150?text=Sin+Imagen"}
+                  src={book.image || "https://www.comunidadbaratz.com/wp-content/uploads/Instrucciones-a-tener-en-cuenta-sobre-como-se-abre-un-libro-nuevo.jpg"}
                   alt={book.title}
                   className="w-full h-60 object-cover rounded-t-lg"
                 />

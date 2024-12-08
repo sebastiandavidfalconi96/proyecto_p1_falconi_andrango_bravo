@@ -9,36 +9,60 @@ const BooksList = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [filters, setFilters] = useState({ titulo: "", categoria: "" });
   const [searchTriggered, setSearchTriggered] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [newBook, setNewBook] = useState({
-    title: "",
-    author: "",
-    price: 0.0,
-    isRented: false,
-    isLoaned: false,
-    category: "",
-    publicationYear: "",
-    location: "",
+    title: "",              // Título del libro
+    author: "",             // Autor del libro
+    isbn: "",               // ISBN del libro
+    price: 0.0,             // Precio del libro
+    isRented: false,        // Si el libro está rentado
+    isLoaned: false,        // Si el libro está prestado
+    category: "",           // Categoría del libro
+    publicationYear: "",    // Año de publicación del libro
+    location: "",           // Ubicación en la librería
+    inventoryCount: 0,      // Cantidad de copias disponibles
+  });
+
+  const [filters, setFilters] = useState({
+    titulo: "",
+    categoria: "",
+    isbn: "",           // Añadido para ISBN
+    author: ""          // Añadido para autor
   });
 
   const [editBook, setEditBook] = useState(null);
 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false); // Modal de confirmación de eliminación
+  const [bookToDelete, setBookToDelete] = useState(null); // Libro que se va a eliminar
 
-  // Fetch books from the server
+  const [userType, setUserType] = useState("");
+  useEffect(() => {
+    const storedUserType = localStorage.getItem("userType");
+    const storedEmail = localStorage.getItem("email");
+
+    if (storedUserType) setUserType(storedUserType);
+
+    setLoading(false);
+  }, []);
+
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search", {
+      const response = await axios.get("http://localhost:4000/api/books/search", {
         params: {
           titulo: filters.titulo || undefined,
           categoria: filters.categoria || undefined,
+          author: filters.author || undefined, // Filtro por autor
+          isbn: filters.isbn || undefined,   // Filtro por ISBN
+          rangoInicio: filters.rangoInicio || undefined,
+          rangoFin: filters.rangoFin || undefined,
         },
       });
       setBooks(response.data);
+      console.log(response.data);
     } catch (err) {
       console.error("Error al cargar los libros:", err);
       setError("No se pudieron cargar los libros. Intenta nuevamente más tarde.");
@@ -89,9 +113,9 @@ const BooksList = () => {
   const handleCreateBook = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books", newBook);
+      const response = await axios.post("http://localhost:4000/api/books", newBook);
       setBooks([...books, response.data]);  // Add the new book to the state
-      setNewBook({ titulo: "", autor: "", isbn: "", categoria: "", cantidad: 0 }); // Reset form
+      setNewBook({ titulo: "", author: "", isbn: "", categoria: "", cantidad: 0 }); // Reset form
       setCreateModalOpen(false); // Close modal
     } catch (err) {
       console.error("Error al crear el libro:", err);
@@ -99,10 +123,21 @@ const BooksList = () => {
     }
   };
 
+  const handleDeleteBook = async () => {
+    try {
+      await axios.delete(`http://localhost:4000/api/books/${bookToDelete.id}`);
+      setBooks(books.filter((book) => book.id !== bookToDelete.id)); // Update the books state after deletion
+      setDeleteModalOpen(false); // Close the modal
+    } catch (err) {
+      console.error("Error al eliminar el libro:", err);
+      setError("No se pudo eliminar el libro. Intenta nuevamente.");
+    }
+  };
+
   const handleEditBook = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${editBook.id}`, editBook);
+      const response = await axios.put(`http://localhost:4000/api/books/${editBook.id}`, editBook);
       const updatedBooks = books.map((book) =>
         book.id === editBook.id ? response.data : book
       );
@@ -130,6 +165,25 @@ const BooksList = () => {
           value={filters.titulo}
           onChange={handleInputChange}
         />
+
+        <input
+          type="text"
+          name="author"
+          placeholder="Buscar por autor"
+          className="p-2 border border-gray-300 rounded-md w-full sm:w-1/2"
+          value={filters.author}
+          onChange={handleInputChange}
+        />
+
+        <input
+          type="text"
+          name="isbn"
+          placeholder="Buscar por ISBN"
+          className="p-2 border border-gray-300 rounded-md w-full sm:w-1/2"
+          value={filters.isbn}
+          onChange={handleInputChange}
+        />
+
         <select
           name="categoria"
           className="p-2 border border-gray-300 rounded-md w-full sm:w-1/4"
@@ -141,7 +195,11 @@ const BooksList = () => {
           <option value="No Ficción">No Ficción</option>
           <option value="Ciencia">Ciencia</option>
           <option value="Historia">Historia</option>
+          <option value="Romance">Romance</option>
+          <option value="Filosofía">Filosofía</option>
+          <option value="Clásicos">Clásicos</option>
         </select>
+
         <button
           onClick={handleSearchClick}
           className="p-2 bg-blue-500 text-white rounded-md"
@@ -150,13 +208,14 @@ const BooksList = () => {
         </button>
       </div>
 
-      {/* Create Book Button */}
-      <button
-        onClick={() => setCreateModalOpen(true)}
-        className="p-2 mb-4 bg-green-500 text-white rounded-md"
-      >
-        Crear Nuevo Libro
-      </button>
+      {userType === "admin" ? (
+        <button
+          onClick={() => setCreateModalOpen(true)}
+          className="p-2 mb-4 bg-green-500 text-white rounded-md"
+        >
+          Crear Nuevo Libro
+        </button>
+      ) : <div></div>}
 
       {/* List of books */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,7 +223,7 @@ const BooksList = () => {
           <Card key={book.id} className="shadow-sm hover:shadow-md transition">
             <CardHeader>
               <img
-                src={book.image || "https://via.placeholder.com/150?text=Sin+Imagen"}
+                src={book.image || "https://www.comunidadbaratz.com/wp-content/uploads/Instrucciones-a-tener-en-cuenta-sobre-como-se-abre-un-libro-nuevo.jpg"}
                 alt={book.title}
                 className="w-full h-60 object-cover rounded-t-lg"
               />
@@ -173,20 +232,52 @@ const BooksList = () => {
               <CardTitle>{book.title}</CardTitle>
               <CardDescription>{book.author}</CardDescription>
               <p className="text-sm text-gray-500">Categoría: {book.category || "No especificada"}</p>
-              <button
-                onClick={() => {
-                  setEditBook(book);
-                  setEditModalOpen(true);
-                }}
-                className="mt-2 text-blue-500"
-              >
-                Editar
-              </button>
+              <p className="text-sm text-gray-500">ISBN: {book.isbn || "No especificada"}</p>
+              {userType === "admin" ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setEditBook(book);
+                      setEditModalOpen(true);
+                    }}
+                    className="mt-2 text-blue-500"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => {
+                      setBookToDelete(book);
+                      setDeleteModalOpen(true);
+                    }}
+                    className="mt-2 ml-10 text-red-500"
+                  >
+                    Eliminar
+                  </button>
+                </>
+              ) : null}
             </CardContent>
           </Card>
         ))}
       </div>
 
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+        <h2 className="text-xl font-semibold text-center text-gray-800">¿Estás seguro de que quieres eliminar este libro?</h2>
+        <div className="mt-4 flex justify-center gap-4">
+          <button
+            onClick={handleDeleteBook}
+            className="p-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+          >
+            Eliminar
+          </button>
+          <button
+            onClick={() => setDeleteModalOpen(false)}
+            className="p-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+          >
+            Cancelar
+          </button>
+        </div>
+      </Modal>
       {/* Create Book Modal */}
       {/* Edit Book Modal */}
       <Modal isOpen={isCreateModalOpen} onClose={() => setCreateModalOpen(false)}>
@@ -277,6 +368,9 @@ const BooksList = () => {
               <option value="No Ficción">No Ficción</option>
               <option value="Ciencia">Ciencia</option>
               <option value="Historia">Historia</option>
+              <option value="Romance">Romance</option>
+              <option value="Filosofía">Filosofía</option>
+              <option value="Clásicos">Clásicos</option>
             </select>
           </div>
 
@@ -315,7 +409,7 @@ const BooksList = () => {
               name="cantidad"
               placeholder="Cantidad"
               className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={newBook.cantidad}
+              value={newBook.inventoryCount}
               onChange={handleNewBookChange}
             />
           </div>
@@ -420,6 +514,9 @@ const BooksList = () => {
               <option value="No Ficción">No Ficción</option>
               <option value="Ciencia">Ciencia</option>
               <option value="Historia">Historia</option>
+              <option value="Romance">Romance</option>
+              <option value="Filosofía">Filosofía</option>
+              <option value="Clásicos">Clásicos</option>
             </select>
           </div>
 
@@ -458,7 +555,7 @@ const BooksList = () => {
               name="cantidad"
               placeholder="Cantidad"
               className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={editBook?.cantidad || ""}
+              value={editBook?.inventoryCount || ""}
               onChange={handleEditBookChange}
             />
           </div>

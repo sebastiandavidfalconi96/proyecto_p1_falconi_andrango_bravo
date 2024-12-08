@@ -39,19 +39,38 @@ const updateUser = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {
+const suspendUser = async (req, res) => {
   try {
-    await userService.deleteUser(req.params.id);
-    res.status(204).send();
+    const { justification } = req.body;  // Recibir la justificación desde el cuerpo de la solicitud
+    const suspendedUser = await userService.suspendUser(req.params.id, justification);
+    res.json(suspendedUser);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+const reactivateUser = async (req, res) => {
+  try {
+    const reactivatedUser = await userService.reactivateUser(req.params.id);
+    res.json(reactivatedUser);  // Devolver el usuario reactivado
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const deleteUser = async (req, res) => {
+  try {
+    const deletedUser = await userService.deleteUser(req.params.id);
+    res.json(deletedUser);  // Devuelve el usuario con estado 'inactivo'
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 module.exports = {
   getAllUsers,
   getUserById,
   createUser,
   updateUser,
   deleteUser,
+  suspendUser,
+  reactivateUser,
 };

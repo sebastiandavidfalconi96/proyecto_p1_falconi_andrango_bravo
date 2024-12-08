@@ -1,9 +1,10 @@
 class UserDTO {
-    constructor({ id, firstName, lastName, email, userType }) {
+    constructor({ id, firstName, lastName, email, userType, status}) {
         this.id = id;
         this.fullName = `${firstName} ${lastName}`;
         this.email = email;
         this.userType = userType;
+        this.status = status;
     }
 }
 
@@ -35,6 +36,11 @@ class UserDTOBuilder {
 
     setUserType(userType) {
         this.user.userType = userType;
+        return this;
+    }
+
+    setStatus(status) {
+        this.user.status = status;
         return this;
     }
 

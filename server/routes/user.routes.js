@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
         return res.status(200).json({
             success: true,
             message: 'Inicio de sesión exitoso.',
-            user: { id: user.id, email: user.email },
+            user: { id: user.id, email: user.email, userType: user.userType },
             // Aquí puedes devolver un token JWT si es necesario
         });
     } catch (err) {
@@ -56,6 +56,8 @@ router.get('/', userController.getAllUsers);
 router.get('/:id', userController.getUserById);
 router.post('/', userController.createUser);
 router.put('/:id', userController.updateUser);
-router.delete('/:id', userController.deleteUser);
+router.patch('/:id/suspend', userController.suspendUser);  // Ruta para suspender usuario
+router.patch('/:id/reactivate', userController.reactivateUser);
+router.delete('/:id', userController.deleteUser);  // Ruta para eliminar usuario (inactivo)
 
 module.exports = router;

@@ -1,6 +1,6 @@
-// services/user.service.js
 const { User } = require('../models');
 const { UserDTOBuilder } = require('../dto/user.dto');
+const { Op } = require('sequelize');
 
 // Crear un usuario
 const createUser = async (data) => {
@@ -11,6 +11,7 @@ const createUser = async (data) => {
     .setLastName(user.lastName)
     .setEmail(user.email)
     .setUserType(user.userType)
+    .setStatus(user.status)  // Agregar status
     .build();
 };
 
@@ -27,14 +28,8 @@ const updateUser = async (id, data) => {
     .setLastName(updatedUser.lastName)
     .setEmail(updatedUser.email)
     .setUserType(updatedUser.userType)
+    .setStatus(updatedUser.status)  // Agregar status
     .build();
-};
-
-// Eliminar un usuario
-const deleteUser = async (id) => {
-  const user = await User.findByPk(id);
-  if (!user) throw new Error('Usuario no encontrado');
-  return user.destroy();
 };
 
 // Obtener un solo usuario por su ID
@@ -48,12 +43,20 @@ const getUserById = async (id) => {
     .setLastName(user.lastName)
     .setEmail(user.email)
     .setUserType(user.userType)
+    .setStatus(user.status)  // Agregar status
     .build();
 };
 
 // Obtener todos los usuarios
 const getAllUsers = async () => {
-  const users = await User.findAll();
+  const users = await User.findAll({
+    where: {
+      status: {
+        [Op.not]: 'eliminado',  // Filtramos los eliminados
+      },
+    },
+  });
+
   return users.map(user =>
     new UserDTOBuilder()
       .setId(user.id)
@@ -61,8 +64,65 @@ const getAllUsers = async () => {
       .setLastName(user.lastName)
       .setEmail(user.email)
       .setUserType(user.userType)
+      .setStatus(user.status)  // Agregar status
       .build()
   );
 };
 
-module.exports = { createUser, updateUser, deleteUser, getUserById, getAllUsers };
+// Suspender un usuario (con motivo)
+const suspendUser = async (id, justification) => {
+  const user = await User.findByPk(id);
+  if (!user) throw new Error('Usuario no encontrado');
+
+  user.status = 'suspendido';  // Cambiar el estado a suspendido
+  user.suspensionReason = justification;  // Guardar el motivo de la suspensión
+  await user.save();
+
+  return new UserDTOBuilder()
+    .setId(user.id)
+    .setFirstName(user.firstName)
+    .setLastName(user.lastName)
+    .setEmail(user.email)
+    .setUserType(user.userType)
+    .setStatus(user.status)
+    .build();
+};
+
+// Reactivar un usuario
+const reactivateUser = async (id) => {
+  const user = await User.findByPk(id);
+  if (!user) throw new Error('Usuario no encontrado');
+
+  user.status = 'activo';  // Cambiar el estado a activo
+  user.suspensionReason = null;  // Limpiar el motivo de la suspensión
+  await user.save();
+
+  return new UserDTOBuilder()
+    .setId(user.id)
+    .setFirstName(user.firstName)
+    .setLastName(user.lastName)
+    .setEmail(user.email)
+    .setUserType(user.userType)
+    .setStatus(user.status)
+    .build();
+};
+
+// Eliminar un usuario (cambiar el estado a 'inactivo')
+const deleteUser = async (id) => {
+  const user = await User.findByPk(id);
+  if (!user) throw new Error('Usuario no encontrado');
+
+  user.status = 'eliminado';  // Cambiar el estado a eliminado
+  await user.save();
+
+  return new UserDTOBuilder()
+    .setId(user.id)
+    .setFirstName(user.firstName)
+    .setLastName(user.lastName)
+    .setEmail(user.email)
+    .setUserType(user.userType)
+    .setStatus(user.status)  // Agregar status
+    .build();
+};
+
+module.exports = { createUser, updateUser, deleteUser, getUserById, suspendUser, getAllUsers, suspendUser, reactivateUser };

@@ -108,7 +108,6 @@ import "@fontsource/montserrat"; // Importa con pesos predeterminados
 const HomePage = () => {
   return (
     <Layout>
-
     </Layout>
   );
 };

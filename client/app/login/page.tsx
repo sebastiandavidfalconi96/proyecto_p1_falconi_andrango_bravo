@@ -26,7 +26,7 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/users/login", {
+      const response = await axios.post("http://localhost:4000/api/users/login", {
         email,
         password,
       });
@@ -36,7 +36,7 @@ const Login = () => {
         localStorage.setItem("token", response.data.token); // Guarda el token
         localStorage.setItem("userType", userType);
         localStorage.setItem("email", email);
-        router.push("/dashboard"); // Redirige al dashboard
+        router.push("/home"); // Redirige al dashboard
       } else {
         setError("Correo o contraseña incorrectos.");
       }
@@ -76,6 +76,12 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+          <p className="text-sm mt-4 text-center">
+            ¿No tienes cuenta?{" "}
+            <a href="/register" className="text-blue-500 hover:underline">
+              Regístrate aquí
+            </a>
+          </p>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Cargando..." : "Iniciar Sesión"}

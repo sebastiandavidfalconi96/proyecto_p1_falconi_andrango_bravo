@@ -15,9 +15,21 @@ const Book = sequelize.define('Book', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  isbn: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  category: {
+    type: DataTypes.STRING,
+  },
   price: {
     type: DataTypes.FLOAT,
     allowNull: false,
+  },
+  inventoryCount: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
   isRented: {
     type: DataTypes.BOOLEAN,
@@ -27,14 +39,15 @@ const Book = sequelize.define('Book', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  category: {
-    type: DataTypes.STRING, // Agregado para categoría
+  location: {
+    type: DataTypes.STRING,
   },
   publicationYear: {
-    type: DataTypes.INTEGER, // Agregado para rango de años
+    type: DataTypes.INTEGER,
   },
-  location: {
-    type: DataTypes.STRING, // Agregado para ubicación
+  isActive: {  // Nuevo campo para gestionar el estado del libro
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,  // Se inicia como activo
   },
 }, {
   tableName: 'books',
