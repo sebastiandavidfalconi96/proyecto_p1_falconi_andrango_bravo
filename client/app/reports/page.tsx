@@ -74,35 +74,35 @@ const Reports = () => {
 
   return (
     <Layout>
-        <div className="p-4">
-        <h1 className="text-2xl font-bold mb-6">Reportes de Préstamos</h1>
-        <table className="table-auto w-full border border-gray-300">
-            <thead>
-            <tr className="bg-gray-200">
-                <th className="p-2 border">ID</th>
-                <th className="p-2 border">Usuario</th>
-                <th className="p-2 border">Libro</th>
-                <th className="p-2 border">Fecha de Préstamo</th>
-                <th className="p-2 border">Fecha de Devolución</th>
-                <th className="p-2 border">Estado</th>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-6">Reportes de Préstamos</h1>
+      <table className="table-auto w-full border border-gray-300">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="p-2 border">ID</th>
+            <th className="p-2 border">Usuario</th>
+            <th className="p-2 border">Libro</th>
+            <th className="p-2 border">Fecha de Préstamo</th>
+            <th className="p-2 border">Fecha de Devolución</th>
+            <th className="p-2 border">Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loans.map((loan) => (
+            <tr key={loan.id} className="text-center">
+              <td className="p-2 border">{loan.id}</td>
+              <td className="p-2 border">{loan.userName}</td>
+              <td className="p-2 border">{loan.bookTitle}</td>
+              <td className="p-2 border">{loan.loanDate || "No registrado"}</td>
+              <td className="p-2 border">{loan.returnDate || "No registrado"}</td>
+              <td className={`p-2 border ${loan.status === "active" ? "text-green-500" : "text-orange-500"}`}>
+                {loan.status}
+              </td>
             </tr>
-            </thead>
-            <tbody>
-            {loans.map((loan) => (
-                <tr key={loan.id} className="text-center">
-                <td className="p-2 border">{loan.id}</td>
-                <td className="p-2 border">{loan.userName}</td>
-                <td className="p-2 border">{loan.bookTitle}</td>
-                <td className="p-2 border">{loan.loanDate || "No registrado"}</td>
-                <td className="p-2 border">{loan.returnDate || "No registrado"}</td>
-                <td className={`p-2 border ${loan.status === "active" ? "text-green-500" : "text-red-500"}`}>
-                    {loan.status}
-                </td>
-                </tr>
-            ))}
-            </tbody>
-        </table>
-        </div>
+          ))}
+        </tbody>
+      </table>
+    </div>
     </Layout>
   );
 };
