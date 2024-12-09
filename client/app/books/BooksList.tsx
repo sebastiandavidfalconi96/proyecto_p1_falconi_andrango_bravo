@@ -231,6 +231,8 @@ const BooksList = () => {
             <CardContent className="p-4">
               <CardTitle>{book.title}</CardTitle>
               <CardDescription>{book.author}</CardDescription>
+              <p className="text-gray-600">ISBN: {book.isbn}</p>
+              <p className="text-gray-600">Categoría: {book.category}</p>
               {userType === "admin" ? (
                 <>
                   <button
@@ -319,6 +321,19 @@ const BooksList = () => {
               placeholder="Precio"
               className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={newBook.price}
+              onChange={handleNewBookChange}
+            />
+          </div>
+
+            {/* Price */}
+            <div>
+            <label htmlFor="isbn" className="block text-gray-700 font-medium mb-2">Isbn</label>
+            <input
+              id="isbn"
+              name="isbn"
+              placeholder="Isbn"
+              className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={newBook.isbn}
               onChange={handleNewBookChange}
             />
           </div>

@@ -155,7 +155,6 @@ const BooksList = () => {
                   <button
                     onClick={() => handleRentBook(book.id)}
                     className="p-2 bg-blue-500 text-white rounded-md"
-                    disabled={flag === "true"}
                   >
                     Prestamo Libro
                     
