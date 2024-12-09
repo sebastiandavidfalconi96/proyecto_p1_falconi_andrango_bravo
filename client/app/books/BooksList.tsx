@@ -51,7 +51,7 @@ const BooksList = () => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:4000/api/books/search", {
+      const response = await axios.get("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search", {
         params: {
           titulo: filters.titulo || undefined,
           categoria: filters.categoria || undefined,
@@ -113,7 +113,7 @@ const BooksList = () => {
   const handleCreateBook = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:4000/api/books", newBook);
+      const response = await axios.post("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books", newBook);
       setBooks([...books, response.data]);  // Add the new book to the state
       setNewBook({ titulo: "", author: "", isbn: "", categoria: "", cantidad: 0 }); // Reset form
       setCreateModalOpen(false); // Close modal
@@ -125,7 +125,7 @@ const BooksList = () => {
 
   const handleDeleteBook = async () => {
     try {
-      await axios.delete(`http://localhost:4000/api/books/${bookToDelete.id}`);
+      await axios.delete(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookToDelete.id}`);
       setBooks(books.filter((book) => book.id !== bookToDelete.id)); // Update the books state after deletion
       setDeleteModalOpen(false); // Close the modal
     } catch (err) {
@@ -137,7 +137,7 @@ const BooksList = () => {
   const handleEditBook = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:4000/api/books/${editBook.id}`, editBook);
+      const response = await axios.put(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${editBook.id}`, editBook);
       const updatedBooks = books.map((book) =>
         book.id === editBook.id ? response.data : book
       );

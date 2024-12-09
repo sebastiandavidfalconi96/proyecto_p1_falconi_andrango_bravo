@@ -17,7 +17,7 @@ const BooksList = () => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:4000/api/books/search", {
+      const response = await axios.get("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search", {
         params: {
           titulo: filters.titulo || undefined,
           categoria: filters.categoria || undefined,

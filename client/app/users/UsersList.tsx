@@ -24,7 +24,7 @@ const UserManagement: React.FC = () => {
   const [action, setAction] = useState<"suspend" | "delete" | "reactivate" | null>(null);
   const [userIdToActOn, setUserIdToActOn] = useState<string | null>(null);
 
-  const API_URL = "http://localhost:4000/api/users";
+  const API_URL = "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/users";
 
   // Obtener usuarios
   // Función para obtener los usuarios

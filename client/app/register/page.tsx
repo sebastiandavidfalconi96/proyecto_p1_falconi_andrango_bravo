@@ -47,7 +47,7 @@ const Register = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:4000/api/users", formData);
+      const response = await axios.post("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/users", formData);
 
       if (response.status === 201) {
         alert("Usuario registrado con éxito.");

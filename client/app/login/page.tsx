@@ -26,16 +26,19 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:4000/api/users/login", {
+      const response = await axios.post("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/users/login", {
         email,
         password,
       });
 
       if (response.data.success) {
         const { userType } = response.data.user; // Captura el userType
+        const { id } = response.data.user;
         localStorage.setItem("token", response.data.token); // Guarda el token
         localStorage.setItem("userType", userType);
+        localStorage.setItem("userId", id);
         localStorage.setItem("email", email);
+
         router.push("/home"); // Redirige al dashboard
       } else {
         setError("Correo o contraseña incorrectos.");
@@ -48,6 +51,7 @@ const Login = () => {
   };
 
   return (
+    
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
         <h2 className="text-2xl font-bold text-center mb-6">Inicio de Sesión</h2>
