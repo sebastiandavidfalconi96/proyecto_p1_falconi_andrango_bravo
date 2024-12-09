@@ -166,7 +166,6 @@ const UserManagement: React.FC = () => {
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b">Nombre</th>
               <th className="py-2 px-4 border-b">Email</th>
               <th className="py-2 px-4 border-b">Tipo</th>
               {userType === "admin" ? (
@@ -177,7 +176,6 @@ const UserManagement: React.FC = () => {
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td className="py-2 px-4 border-b">{`${user.firstName} ${user.lastName}`}</td>
                 <td className="py-2 px-4 border-b">{user.email}</td>
                 <td className="py-2 px-4 border-b">{user.userType}</td>
                 <td className="py-2 px-4 border-b">{user.status === 'activo' ? 'Activo' : 'Suspendido'}</td>

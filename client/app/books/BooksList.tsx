@@ -231,8 +231,6 @@ const BooksList = () => {
             <CardContent className="p-4">
               <CardTitle>{book.title}</CardTitle>
               <CardDescription>{book.author}</CardDescription>
-              <p className="text-sm text-gray-500">Categoría: {book.category || "No especificada"}</p>
-              <p className="text-sm text-gray-500">ISBN: {book.isbn || "No especificada"}</p>
               {userType === "admin" ? (
                 <>
                   <button

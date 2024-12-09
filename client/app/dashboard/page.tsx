@@ -34,7 +34,6 @@ const Layout: React.FC = ({ children }) => {
         { href: "/books", label: "Gestión Libros", icon: <BookOpen className="w-5 h-5" /> },
         { href: "/users", label: "Gestión Usuarios", icon: <User className="w-5 h-5" /> },
         { href: "/reports", label: "Reporte Préstamos", icon: <User className="w-5 h-5" /> },
-        { href: "/history", label: "Reporte Usuarios", icon: <User className="w-5 h-5" /> },
       ]
       : [
         { href: "/home", label: "Inicio", icon: <Home className="w-5 h-5" /> },
