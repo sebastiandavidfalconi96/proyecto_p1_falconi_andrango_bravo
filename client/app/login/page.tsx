@@ -14,6 +14,17 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter(); // Para redireccionar
 
+  // Función para sanitizar valores (permite letras, números, espacios y puntos)
+  const sanitizeValue = (value) => value.replace(/[^a-zA-Z0-9.@\s]/g, "");
+
+  const handleEmailChange = (e) => {
+    setEmail(sanitizeValue(e.target.value)); // Sanitiza el valor del correo electrónico
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(sanitizeValue(e.target.value)); // Sanitiza el valor de la contraseña
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -26,11 +37,18 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/users/login", {
-        email,
-        password,
-      });
-
+      const response = await axios.post(
+        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/users/login",
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+          },
+        }
+      );
       if (response.data.success) {
         const { userType } = response.data.user; // Captura el userType
         const { id } = response.data.user;
@@ -51,7 +69,6 @@ const Login = () => {
   };
 
   return (
-    
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md p-8 bg-white shadow-md rounded-lg">
         <h2 className="text-2xl font-bold text-center mb-6">Inicio de Sesión</h2>
@@ -65,7 +82,7 @@ const Login = () => {
               id="email"
               placeholder="Ingresa tu correo"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
             />
           </div>
           <div>
@@ -77,7 +94,7 @@ const Login = () => {
               id="password"
               placeholder="Ingresa tu contraseña"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
             />
           </div>
           <p className="text-sm mt-4 text-center">

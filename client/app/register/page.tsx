@@ -14,18 +14,39 @@ const Register = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    userType: "consumer", // Cambiado a "consumer"
+    userType: "consumer",
   });
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const validateInput = (name, value) => {
+    if (name === "email") {
+      const emailRegex = /^[a-zA-Z0-9@.]*$/;
+      return emailRegex.test(value);
+    }
+
+    if (name === "firstName" || name === "lastName" || name === "password") {
+      const textRegex = /^[a-zA-Z0-9]{0,10}$/;
+      return textRegex.test(value);
+    }
+
+    return true;
+  };
+
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    if (validateInput(name, value)) {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+      setError(""); // Clear error if input becomes valid
+    } else {
+      setError("Algunos campos tienen caracteres no permitidos o exceden el límite.");
+    }
   };
 
   const handleSubmit = async (e) => {

@@ -19,7 +19,14 @@ const EditBook = ({ bookId }) => {
   useEffect(() => {
     const fetchBookData = async () => {
       try {
-        const response = await axios.get(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`);
+        const response = await axios.get(
+          `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`,
+          {
+            headers: {
+              Authorization: `Bearer your-secret-key`, // Enviar el token en el encabezado
+            },
+          }
+        );
         setBookData(response.data);
       } catch (err) {
         setError("No se pudo obtener la información del libro.");
@@ -40,7 +47,15 @@ const EditBook = ({ bookId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`, bookData);
+      const response = await axios.put(
+        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`,
+        bookData,
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Enviar el token en el encabezado
+          },
+        }
+      );
       setSuccessMessage("Libro actualizado con éxito");
       // Optionally, redirect or update the page
       router.push("/books");

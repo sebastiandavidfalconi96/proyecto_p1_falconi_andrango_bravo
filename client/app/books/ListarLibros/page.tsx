@@ -17,12 +17,17 @@ const BooksList = () => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search", {
-        params: {
-          titulo: filters.titulo || undefined,
-          categoria: filters.categoria || undefined,
-        },
-      });
+      const response = await axios.get(
+        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search",
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+          },
+          params: {
+            titulo: filters.titulo || undefined,
+            categoria: filters.categoria || undefined,
+          },
+        });
       setBooks(response.data);
     } catch (err) {
       console.error("Error al cargar los libros:", err);
@@ -45,9 +50,11 @@ const BooksList = () => {
   }, [filters, mounted, searchTriggered]);
 
   const handleInputChange = (e) => {
+    const sanitizedValue = e.target.value.replace(/[^a-zA-Z0-9\s]/g, ''); // Permite solo letras, números y espacios
+
     setFilters({
       ...filters,
-      [e.target.name]: e.target.value,
+      [e.target.name]: sanitizedValue,
     });
   };
 

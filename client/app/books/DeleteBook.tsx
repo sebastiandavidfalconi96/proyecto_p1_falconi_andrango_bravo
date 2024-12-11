@@ -7,7 +7,14 @@ import Modal from "@/app/modal/modal"; // Importamos el Modal
 const DeleteBookModal = ({ book, isOpen, onClose, onDelete }) => {
   const handleDelete = async () => {
     try {
-      await axios.delete(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${book.id}`);
+      await axios.delete(
+        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${book.id}`,
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Enviar el token en el encabezado
+          },
+        }
+      );
       onDelete(book.id);  // Llamar a la función onDelete pasada por props para actualizar la lista
       onClose();  // Cerrar el modal
     } catch (err) {
@@ -52,7 +59,14 @@ const BooksList = () => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books");
+      const response = await axios.get(
+        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books",
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Enviar el token en el encabezado
+          },
+        }
+      );
       setBooks(response.data);
     } catch (err) {
       console.error("Error al cargar los libros:", err);

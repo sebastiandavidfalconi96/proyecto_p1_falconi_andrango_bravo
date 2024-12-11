@@ -12,6 +12,7 @@ const BooksList = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [userType, setUserType] = useState("");
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -23,13 +24,23 @@ const BooksList = () => {
     const storedFlag = localStorage.getItem("flag");
     if (storedFlag) setFlag(storedFlag);
 
+    const storedUserType = localStorage.getItem("userType");
+    if (storedUserType) setUserType(storedUserType); 
+
     fetchBooks();
   }, []);
 
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search");
+      const response = await axios.get(
+        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search",
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+          },
+        }
+      );
       setBooks(response.data);
     } catch (err) {
       console.error("Error al cargar los libros:", err);
@@ -72,16 +83,20 @@ const BooksList = () => {
       const xmlDoc = parser.parseFromString(response.data, "text/xml");
       const confirmationText = xmlDoc.getElementsByTagName("confirmation")[0]?.textContent;
       const loanId = confirmationText?.match(/[0-9a-fA-F-]{36}/)?.[0];
-  
+
       setLastLoanId(loanId);
       localStorage.setItem("loanId", loanId);
       localStorage.setItem("flag", true);
 
       const restResponse = await axios.put(
         `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`,
-        { isRented: true }
+        { isRented: true },
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+          },
+        }
       );
-
       console.log("Respuesta de REST:", restResponse.data);
       fetchBooks();
       alert("El libro ha sido rentado con éxito.");
@@ -115,7 +130,12 @@ const BooksList = () => {
 
       const restResponse = await axios.put(
         `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`,
-        { isRented: false }
+        { isRented: false },
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+          },
+        }
       );
       console.log("Respuesta de REST:", restResponse.data);
       localStorage.setItem("flag", false);
@@ -157,9 +177,9 @@ const BooksList = () => {
                     className="p-2 bg-blue-500 text-white rounded-md"
                   >
                     Prestamo Libro
-                    
+
                   </button>
-                  
+
                 ) : (
                   <button
                     onClick={() => handleReturnBook(book.id)}

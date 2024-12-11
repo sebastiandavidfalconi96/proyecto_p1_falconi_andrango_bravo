@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Modal from "@/app/modal/modal"; // Import the Modal
+import DOMPurify from 'dompurify';
 
 const BooksList = () => {
   const [books, setBooks] = useState([]);
@@ -44,6 +45,7 @@ const BooksList = () => {
     const storedEmail = localStorage.getItem("email");
 
     if (storedUserType) setUserType(storedUserType);
+    fetchBooks();
 
     setLoading(false);
   }, []);
@@ -52,6 +54,9 @@ const BooksList = () => {
     try {
       setLoading(true);
       const response = await axios.get("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search", {
+        headers: {
+          Authorization: `Bearer your-secret-key`, // Envía el API token en el encabezado
+        },
         params: {
           titulo: filters.titulo || undefined,
           categoria: filters.categoria || undefined,
@@ -83,12 +88,20 @@ const BooksList = () => {
     }
   }, [filters, mounted, searchTriggered]);
 
+  // Ejemplo: sanitizar el valor de entrada antes de enviar
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    // Eliminar símbolos utilizando una expresión regular
+    const sanitizedValue = value.replace(/[^a-zA-Z0-9\s]/g, ''); // Permite solo letras, números y espacios
+
+    // Actualizar el estado con el valor limpio
     setFilters({
       ...filters,
-      [e.target.name]: e.target.value,
+      [name]: sanitizedValue,
     });
   };
+
 
   const handleSearchClick = () => {
     setSearchTriggered(true);
@@ -96,24 +109,36 @@ const BooksList = () => {
 
   const handleNewBookChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const sanitizedValue = value.replace(/[^a-zA-Z0-9\s]/g, ''); // Permite solo letras, números y espacios
+
     setNewBook({
       ...newBook,
-      [name]: type === 'checkbox' ? checked : value, // Handle boolean values for checkboxes
+      [name]: type === 'checkbox' ? checked : sanitizedValue, // Handle boolean values for checkboxes
     });
   };
 
   const handleEditBookChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const sanitizedValue = value.replace(/[^a-zA-Z0-9\s]/g, ''); // Permite solo letras, números y espacios
+
     setEditBook({
       ...editBook,
-      [name]: type === 'checkbox' ? checked : value, // Handle boolean values for checkboxes
+      [name]: type === 'checkbox' ? checked : sanitizedValue, // Handle boolean values for checkboxes
     });
   };
 
   const handleCreateBook = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books", newBook);
+      const response = await axios.post(
+        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books",
+        newBook,
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Envía el API token en el encabezado
+          },
+        }
+      );
       setBooks([...books, response.data]);  // Add the new book to the state
       setNewBook({ titulo: "", author: "", isbn: "", categoria: "", cantidad: 0 }); // Reset form
       setCreateModalOpen(false); // Close modal
@@ -125,7 +150,14 @@ const BooksList = () => {
 
   const handleDeleteBook = async () => {
     try {
-      await axios.delete(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookToDelete.id}`);
+      await axios.delete(
+        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookToDelete.id}`,
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Envía el API token en el encabezado
+          },
+        }
+      );
       setBooks(books.filter((book) => book.id !== bookToDelete.id)); // Update the books state after deletion
       setDeleteModalOpen(false); // Close the modal
     } catch (err) {
@@ -137,7 +169,15 @@ const BooksList = () => {
   const handleEditBook = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${editBook.id}`, editBook);
+      const response = await axios.put(
+        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${editBook.id}`,
+        editBook,
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Enviar token en el encabezado
+          },
+        }
+      );
       const updatedBooks = books.map((book) =>
         book.id === editBook.id ? response.data : book
       );
@@ -165,7 +205,7 @@ const BooksList = () => {
           value={filters.titulo}
           onChange={handleInputChange}
         />
-
+{/*
         <input
           type="text"
           name="author"
@@ -199,7 +239,7 @@ const BooksList = () => {
           <option value="Filosofía">Filosofía</option>
           <option value="Clásicos">Clásicos</option>
         </select>
-
+*/}
         <button
           onClick={handleSearchClick}
           className="p-2 bg-blue-500 text-white rounded-md"
@@ -231,8 +271,6 @@ const BooksList = () => {
             <CardContent className="p-4">
               <CardTitle>{book.title}</CardTitle>
               <CardDescription>{book.author}</CardDescription>
-              <p className="text-gray-600">ISBN: {book.isbn}</p>
-              <p className="text-gray-600">Categoría: {book.category}</p>
               {userType === "admin" ? (
                 <>
                   <button
@@ -325,8 +363,8 @@ const BooksList = () => {
             />
           </div>
 
-            {/* Price */}
-            <div>
+          {/* Price */}
+          <div>
             <label htmlFor="isbn" className="block text-gray-700 font-medium mb-2">Isbn</label>
             <input
               id="isbn"
@@ -355,15 +393,17 @@ const BooksList = () => {
           {/* Location */}
           <div>
             <label htmlFor="location" className="block text-gray-700 font-medium mb-2">Ubicación</label>
-            <input
+            <select
               id="location"
-              type="text"
               name="location"
-              placeholder="Ubicación del libro"
               className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={newBook.location}
               onChange={handleNewBookChange}
-            />
+            >
+              <option value="">Seleccionar ubicación</option>
+              <option value="Primer Piso">Primer Piso</option>
+              <option value="Segundo Piso">Segundo Piso</option>
+            </select>
           </div>
 
           {/* Category */}
@@ -387,7 +427,7 @@ const BooksList = () => {
             </select>
           </div>
 
-          {/* Alquilado Checkbox */}
+          {/* Alquilado Checkbox 
           <div className="flex items-center gap-2">
             <input
               id="isRented"
@@ -398,9 +438,9 @@ const BooksList = () => {
               className="h-5 w-5 text-blue-500 border-gray-300 rounded"
             />
             <label htmlFor="isRented" className="text-gray-700">Alquilado</label>
-          </div>
+          </div>*/}
 
-          {/* Prestado Checkbox */}
+          {/* Prestado Checkbox 
           <div className="flex items-center gap-2">
             <input
               id="isLoaned"
@@ -411,9 +451,9 @@ const BooksList = () => {
               className="h-5 w-5 text-blue-500 border-gray-300 rounded"
             />
             <label htmlFor="isLoaned" className="text-gray-700">Prestado</label>
-          </div>
+          </div>*/}
 
-          {/* Quantity */}
+          {/* Quantity 
           <div>
             <label htmlFor="cantidad" className="block text-gray-700 font-medium mb-2">Cantidad en inventario</label>
             <input
@@ -425,7 +465,7 @@ const BooksList = () => {
               value={newBook.inventoryCount}
               onChange={handleNewBookChange}
             />
-          </div>
+          </div>*/}
 
           {/* Submit Button */}
           <div className="mt-6 flex justify-center">
@@ -501,15 +541,17 @@ const BooksList = () => {
           {/* Location */}
           <div>
             <label htmlFor="location" className="block text-gray-700 font-medium mb-2">Ubicación</label>
-            <input
+            <select
               id="location"
-              type="text"
               name="location"
-              placeholder="Ubicación del libro"
               className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={editBook?.location || ""}
-              onChange={handleEditBookChange}
-            />
+              value={newBook.location}
+              onChange={handleNewBookChange}
+            >
+              <option value="">Seleccionar ubicación</option>
+              <option value="Primer Piso">Primer Piso</option>
+              <option value="Segundo Piso">Segundo Piso</option>
+            </select>
           </div>
 
           {/* Category */}
@@ -533,7 +575,7 @@ const BooksList = () => {
             </select>
           </div>
 
-          {/* Alquilado Checkbox */}
+          {/* Alquilado Checkbox 
           <div className="flex items-center gap-2">
             <input
               id="isRented"
@@ -544,9 +586,9 @@ const BooksList = () => {
               className="h-5 w-5 text-blue-500 border-gray-300 rounded"
             />
             <label htmlFor="isRented" className="text-gray-700">Alquilado</label>
-          </div>
+          </div>*/}
 
-          {/* Prestado Checkbox */}
+          {/* Prestado Checkbox 
           <div className="flex items-center gap-2">
             <input
               id="isLoaned"
@@ -557,9 +599,9 @@ const BooksList = () => {
               className="h-5 w-5 text-blue-500 border-gray-300 rounded"
             />
             <label htmlFor="isLoaned" className="text-gray-700">Prestado</label>
-          </div>
+          </div>*/}
 
-          {/* Quantity */}
+          {/* Quantity
           <div>
             <label htmlFor="cantidad" className="block text-gray-700 font-medium mb-2">Cantidad en inventario</label>
             <input
@@ -572,6 +614,7 @@ const BooksList = () => {
               onChange={handleEditBookChange}
             />
           </div>
+          */}
 
           {/* Submit Button */}
           <div className="mt-6 flex justify-center">

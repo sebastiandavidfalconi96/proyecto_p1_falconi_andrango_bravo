@@ -9,12 +9,23 @@ const Index = () => {
     // Obtener el userType desde localStorage al cargar el componente
     useEffect(() => {
         const storedUserType = localStorage.getItem("userType");
-        const storedEmail = localStorage.getItem("email");
         if (storedUserType) {
             setUserType(storedUserType); // Establece el userType desde el localStorage
         }
-
     }, []);
+
+    if (!userType || (userType !== "admin" && userType !== "consumer")) {
+        return (
+            <div className="flex justify-center items-center h-screen bg-gray-100">
+                <div className="bg-white shadow-md rounded-lg p-6">
+                    <h1 className="text-2xl font-bold text-gray-800">Por favor, iniciar sesión</h1>
+                    <p className="text-gray-600 mt-4">
+                        Necesitas iniciar sesión para acceder a esta página.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <Layout>
@@ -54,17 +65,7 @@ const Index = () => {
                                 Universidad de las Fuerzas Armadas
                             </p>
                         </div>
-                    ) : (
-                        <div className="space-y-4">
-                            <h1 className="text-2xl font-bold text-gray-800">Bienvenido</h1>
-                            <p className="text-gray-600">
-                                Por favor, selecciona una opción del menú para comenzar.
-                            </p>
-                            <p className="text-sm text-gray-500">
-                                Universidad de las Fuerzas Armadas
-                            </p>
-                        </div>
-                    )}
+                    ) : null}
                 </div>
             </main>
         </Layout>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import DOMPurify from 'dompurify';
 
 interface User {
   id: string;
@@ -31,7 +32,14 @@ const UserManagement: React.FC = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get<User[]>(API_URL);
+      const response = await axios.get<User[]>(
+        API_URL,
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+          },
+        }
+      );
       // Filtrar solo los usuarios activos o suspendidos
       const filteredUsers = response.data.filter(user => user.status !== 'eliminado');
       setUsers(filteredUsers);
@@ -61,7 +69,15 @@ const UserManagement: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await axios.put(`${API_URL}/${selectedUser.id}`, formData);
+      const response = await axios.put(
+        `${API_URL}/${selectedUser.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+          },
+        }
+      );
       setUsers((prev) =>
         prev.map((user) => (user.id === selectedUser.id ? response.data : user))
       );
@@ -125,8 +141,15 @@ const UserManagement: React.FC = () => {
 
     try {
       if (action === "suspend" && justification) {
-        // Confirmar suspensión
-        await axios.patch(`${API_URL}/${userIdToActOn}/suspend`, { justification });
+        await axios.patch(
+          `${API_URL}/${userIdToActOn}/suspend`,
+          { justification },
+          {
+            headers: {
+              Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+            },
+          }
+        );
         setUsers((prev) =>
           prev.map((user) =>
             user.id === userIdToActOn ? { ...user, status: 'suspendido' } : user
@@ -135,11 +158,26 @@ const UserManagement: React.FC = () => {
         setSuspensionReason("");  // Limpiar justificación
       } else if (action === "delete") {
         // Confirmar eliminación
-        await axios.delete(`${API_URL}/${userIdToActOn}`);
+        await axios.delete(
+          `${API_URL}/${userIdToActOn}`,
+          {
+            headers: {
+              Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+            },
+          }
+        );
         setUsers((prev) => prev.filter((user) => user.id !== userIdToActOn));
       } else if (action === "reactivate") {
         // Confirmar reactivación
-        await axios.patch(`${API_URL}/${userIdToActOn}/reactivate`);
+        await axios.patch(
+          `${API_URL}/${userIdToActOn}/reactivate`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
+            },
+          }
+        );
         setUsers((prev) =>
           prev.map((user) =>
             user.id === userIdToActOn ? { ...user, status: 'activo', suspensionReason: null } : user
@@ -178,7 +216,6 @@ const UserManagement: React.FC = () => {
               <tr key={user.id}>
                 <td className="py-2 px-4 border-b">{user.email}</td>
                 <td className="py-2 px-4 border-b">{user.userType}</td>
-                <td className="py-2 px-4 border-b">{user.status === 'activo' ? 'Activo' : 'Suspendido'}</td>
                 {userType === 'admin' && (
                   <td className="py-2 px-4 border-b">
                     <button
@@ -187,14 +224,14 @@ const UserManagement: React.FC = () => {
                     >
                       Editar
                     </button>
-                    {user.status !== 'suspendido' && (
+                    {/*user.status !== 'suspendido' && (
                       <button
                         className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 ml-2"
                         onClick={() => handleSuspend(user.id)}
                       >
                         Suspender
                       </button>
-                    )}
+                    )*/}
                     {user.status === 'suspendido' && (
                       <button
                         className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600 ml-2"
@@ -259,26 +296,6 @@ const UserManagement: React.FC = () => {
           <div className="bg-white p-6 rounded-lg shadow-md w-1/2">
             <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
             <div className="space-y-4">
-              <div>
-                <label className="block font-medium">Nombre</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName || ""}
-                  onChange={handleChange}
-                  className="w-full border-gray-300 rounded-lg shadow-sm"
-                />
-              </div>
-              <div>
-                <label className="block font-medium">Apellido</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName || ""}
-                  onChange={handleChange}
-                  className="w-full border-gray-300 rounded-lg shadow-sm"
-                />
-              </div>
               <div>
                 <label className="block font-medium">Email</label>
                 <input
