@@ -8,7 +8,7 @@ const DeleteBookModal = ({ book, isOpen, onClose, onDelete }) => {
   const handleDelete = async () => {
     try {
       await axios.delete(
-        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${book.id}`,
+        `http://localhost:4000/api/books/${book.id}`,
         {
           headers: {
             Authorization: `Bearer your-secret-key`, // Enviar el token en el encabezado
@@ -60,7 +60,7 @@ const BooksList = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books",
+        "http://localhost:4000/api/books",
         {
           headers: {
             Authorization: `Bearer your-secret-key`, // Enviar el token en el encabezado

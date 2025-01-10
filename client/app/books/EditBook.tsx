@@ -20,7 +20,7 @@ const EditBook = ({ bookId }) => {
     const fetchBookData = async () => {
       try {
         const response = await axios.get(
-          `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`,
+          `http://localhost:4000/api/books/${bookId}`,
           {
             headers: {
               Authorization: `Bearer your-secret-key`, // Enviar el token en el encabezado
@@ -48,7 +48,7 @@ const EditBook = ({ bookId }) => {
     e.preventDefault();
     try {
       const response = await axios.put(
-        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`,
+        `http://localhost:4000/api/books/${bookId}`,
         bookData,
         {
           headers: {

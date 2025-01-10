@@ -24,7 +24,7 @@ const Reports = () => {
     const fetchLoans = async () => {
       try {
         const soapEnvelope = `
-          <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/LibraryService">
+          <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://localhost:4000/LibraryService">
             <soapenv:Body>
               <tns:getAllLoansRequest/>
             </soapenv:Body>
@@ -32,7 +32,7 @@ const Reports = () => {
         `;
 
         const response = await axios.post(
-          "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/soap",
+          "http://localhost:4000/soap",
           soapEnvelope,
           {
             headers: { "Content-Type": "text/xml" },

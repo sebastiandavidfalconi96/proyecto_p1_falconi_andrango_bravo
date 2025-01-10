@@ -53,7 +53,7 @@ const BooksList = () => {
   const fetchBooks = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search", {
+      const response = await axios.get("http://localhost:4000/api/books/search", {
         headers: {
           Authorization: `Bearer your-secret-key`, // Envía el API token en el encabezado
         },
@@ -131,7 +131,7 @@ const BooksList = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books",
+        "http://localhost:4000/api/books",
         newBook,
         {
           headers: {
@@ -151,7 +151,7 @@ const BooksList = () => {
   const handleDeleteBook = async () => {
     try {
       await axios.delete(
-        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookToDelete.id}`,
+        `http://localhost:4000/api/books/${bookToDelete.id}`,
         {
           headers: {
             Authorization: `Bearer your-secret-key`, // Envía el API token en el encabezado
@@ -170,7 +170,7 @@ const BooksList = () => {
     e.preventDefault();
     try {
       const response = await axios.put(
-        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${editBook.id}`,
+        `http://localhost:4000/api/books/${editBook.id}`,
         editBook,
         {
           headers: {

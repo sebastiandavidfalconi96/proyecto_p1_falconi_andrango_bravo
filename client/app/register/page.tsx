@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,14 +12,31 @@ const Register = () => {
     firstName: "",
     lastName: "",
     email: "",
+    libraryId: "",
     password: "",
     confirmPassword: "",
     userType: "consumer",
   });
 
+  const [libraries, setLibraries] = useState([]); // Para almacenar las bibliotecas
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  // Fetch libraries al cargar el componente
+  useEffect(() => {
+    const fetchLibraries = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/api/libraries");
+        setLibraries(response.data); // Guarda las bibliotecas en el estado
+      } catch (err) {
+        console.error("Error al cargar las bibliotecas:", err);
+        setError("No se pudieron cargar las bibliotecas. Intenta nuevamente.");
+      }
+    };
+
+    fetchLibraries();
+  }, []);
 
   const validateInput = (name, value) => {
     if (name === "email") {
@@ -38,23 +55,19 @@ const Register = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (validateInput(name, value)) {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-      setError(""); // Clear error if input becomes valid
-    } else {
-      setError("Algunos campos tienen caracteres no permitidos o exceden el límite.");
-    }
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { firstName, lastName, email, password, confirmPassword } = formData;
+    const { firstName, lastName, email, password, confirmPassword, libraryId } = formData;
 
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+    if (!firstName || !lastName || !email || !password || !confirmPassword || !libraryId) {
       setError("Por favor, completa todos los campos.");
       return;
     }
@@ -68,7 +81,7 @@ const Register = () => {
     setError("");
 
     try {
-      const response = await axios.post("https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/users", formData);
+      const response = await axios.post("http://localhost:4000/api/users", formData);
 
       if (response.status === 201) {
         alert("Usuario registrado con éxito.");
@@ -124,6 +137,25 @@ const Register = () => {
               value={formData.email}
               onChange={handleChange}
             />
+          </div>
+          <div>
+            <Label htmlFor="libraryId" className="mb-1">
+              Selecciona tu sede
+            </Label>
+            <select
+              id="libraryId"
+              name="libraryId"
+              value={formData.libraryId}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            >
+              <option value="">Selecciona una sede</option>
+              {libraries.map((library) => (
+                <option key={library.id} value={library.id}>
+                  {library.name}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <Label htmlFor="password" className="mb-1">

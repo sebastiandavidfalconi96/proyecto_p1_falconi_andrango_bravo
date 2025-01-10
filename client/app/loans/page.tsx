@@ -34,7 +34,7 @@ const BooksList = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/search",
+        "http://localhost:4000/api/books/search",
         {
           headers: {
             Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
@@ -57,7 +57,7 @@ const BooksList = () => {
       .split("T")[0];
 
     const soapEnvelope = `
-      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:lib="https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/LibraryService">
+      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:lib="http://localhost:4000/LibraryService">
         <soapenv:Header/>
         <soapenv:Body>
           <lib:registerLoanRequest>
@@ -72,7 +72,7 @@ const BooksList = () => {
 
     try {
       const response = await axios.post(
-        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/soap",
+        "http://localhost:4000/soap",
         soapEnvelope,
         {
           headers: { "Content-Type": "text/xml" },
@@ -89,7 +89,7 @@ const BooksList = () => {
       localStorage.setItem("flag", true);
 
       const restResponse = await axios.put(
-        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`,
+        `http://localhost:4000/api/books/${bookId}`,
         { isRented: true },
         {
           headers: {
@@ -108,7 +108,7 @@ const BooksList = () => {
 
   const handleReturnBook = async (bookId) => {
     const soapEnvelope = `
-      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:lib="https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/LibraryService">
+      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:lib="http://localhost:4000/LibraryService">
         <soapenv:Header/>
         <soapenv:Body>
           <lib:returnLoanRequest>
@@ -120,7 +120,7 @@ const BooksList = () => {
 
     try {
       const response = await axios.post(
-        "https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/soap",
+        "http://localhost:4000/soap",
         soapEnvelope,
         {
           headers: { "Content-Type": "text/xml" },
@@ -129,7 +129,7 @@ const BooksList = () => {
       console.log("Respuesta de SOAP:", response.data);
 
       const restResponse = await axios.put(
-        `https://stunning-fortnight-j9xv4995xw3q6j6-4000.app.github.dev/api/books/${bookId}`,
+        `http://localhost:4000/api/books/${bookId}`,
         { isRented: false },
         {
           headers: {

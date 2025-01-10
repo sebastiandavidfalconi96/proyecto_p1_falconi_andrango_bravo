@@ -14,7 +14,7 @@ const Index = () => {
         }
     }, []);
 
-    if (!userType || (userType !== "admin" && userType !== "consumer")) {
+    if (!userType || (userType !== "admin" && userType !== "consumer" && userType !== "creator")) {
         return (
             <div className="flex justify-center items-center h-screen bg-gray-100">
                 <div className="bg-white shadow-md rounded-lg p-6">
@@ -60,6 +60,20 @@ const Index = () => {
                             <ul className="list-disc list-inside space-y-2 text-gray-700">
                                 <li>Gestión de préstamos de libros.</li>
                                 <li>Consulta del historial de préstamos realizados.</li>
+                            </ul>
+                            <p className="text-sm text-gray-500">
+                                Universidad de las Fuerzas Armadas
+                            </p>
+                        </div>
+                    ) : userType === "creator" ? (
+                        <div className="space-y-4">
+                            <h1 className="text-2xl font-bold text-gray-800">Cuenta Root</h1>
+                            <p className="text-gray-600">
+                                Bienvenido, usuario Root. Aquí
+                                podrás realizar las siguientes acciones:
+                            </p>
+                            <ul className="list-disc list-inside space-y-2 text-gray-700">
+                                <li>Gestión de librerias de la Universidad de las Fuerzas Armadas.</li>
                             </ul>
                             <p className="text-sm text-gray-500">
                                 Universidad de las Fuerzas Armadas

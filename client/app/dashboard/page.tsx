@@ -29,17 +29,23 @@ const Layout: React.FC = ({ children }) => {
 
   const navOptions =
     userType === "admin"
-      ? [
+    ? [
         { href: "/home", label: "Inicio", icon: <Home className="w-5 h-5" /> },
         { href: "/books", label: "Gestión Libros", icon: <BookOpen className="w-5 h-5" /> },
         { href: "/users", label: "Gestión Usuarios", icon: <User className="w-5 h-5" /> },
         { href: "/reports", label: "Reporte Préstamos", icon: <User className="w-5 h-5" /> },
       ]
-      : [
+    : userType === "creator"
+    ? [
+        { href: "/home", label: "Inicio", icon: <Home className="w-5 h-5" /> },
+        { href: "/libraries", label: "Crear Librerias", icon: <BookOpen className="w-5 h-5" /> },
+      ]
+    : userType === "consumer"
+    ? [
         { href: "/home", label: "Inicio", icon: <Home className="w-5 h-5" /> },
         { href: "/loans", label: "Préstamos", icon: <BookOpen className="w-5 h-5" /> },
         { href: "/history", label: "Historial", icon: <BookOpen className="w-5 h-5" /> },
-      ];
+      ]: null;
 
   if (loading) {
     return (
