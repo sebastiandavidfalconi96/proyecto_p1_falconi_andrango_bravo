@@ -52,9 +52,12 @@ const Login = () => {
       if (response.data.success) {
         const { userType } = response.data.user; // Captura el userType
         const { id } = response.data.user;
+        const { libraryId } = response.data.user;
+        console.log(response.data.user);
         localStorage.setItem("token", response.data.token); // Guarda el token
         localStorage.setItem("userType", userType);
         localStorage.setItem("userId", id);
+        localStorage.setItem("libraryId", libraryId);
         localStorage.setItem("email", email);
 
         router.push("/home"); // Redirige al dashboard

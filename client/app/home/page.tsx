@@ -2,17 +2,74 @@
 
 import React, { useEffect, useState } from "react";
 import Layout from "../dashboard/page";
+import axios from "axios";
+
+
+interface User {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    userType: string;
+    libraryId: string;
+  }
 
 const Index = () => {
+    const [users, setUsers] = useState<User[]>([]);
     const [userType, setUserType] = useState("");
+    const [userId, setUserId] = useState("");
+    const [libraryId, setLibraryId] = useState("");
+    const [library, setLibrary] = useState<any>(null);
+
 
     // Obtener el userType desde localStorage al cargar el componente
     useEffect(() => {
         const storedUserType = localStorage.getItem("userType");
+        const storedUserId = localStorage.getItem("userId");
+        const storedLibraryId = localStorage.getItem("libraryId");
+
         if (storedUserType) {
             setUserType(storedUserType); // Establece el userType desde el localStorage
         }
+        if (storedUserId) {
+            setUserId(storedUserId)
+        }
+        if (storedLibraryId) {
+            setLibraryId(storedLibraryId)
+        }
+
     }, []);
+
+    useEffect(() => {
+        // 1. If userType not yet set, do nothing
+        if (!userType) return;
+      
+        // 2. If user is NOT admin, do nothing
+        if (userType !== "admin") return;
+      
+        // 3. Get libraryId from localStorage
+        const storedLibraryId = localStorage.getItem("libraryId");
+        if (!storedLibraryId) return;
+      
+        // 4. Fetch library
+        const fetchLibrary = async () => {
+          try {
+            const response = await axios.get(
+              `http://localhost:4000/api/libraries/${storedLibraryId}`
+            );
+            setLibrary(response.data);
+          } catch (error) {
+            console.error("Error al obtener la biblioteca:", error);
+          }
+        };
+      
+        fetchLibrary();
+      // 5. We depend on userType so the effect re-runs if userType changes
+      }, [userType]);
+      
+      
+
+      
 
     if (!userType || (userType !== "admin" && userType !== "consumer" && userType !== "creator")) {
         return (
@@ -36,7 +93,16 @@ const Index = () => {
                         <div className="space-y-4">
                             <h1 className="text-2xl font-bold text-gray-800">
                                 Administrador del Sistema
+                                <br />
+                                {libraryId}
                             </h1>
+                                {/* Si library existe, mostramos name y address */}
+                                {library && (
+                                <div>
+                                    <p className="text-gray-600">Nombre: {library.name}</p>
+                                    <p className="text-gray-600">Dirección: {library.address}</p>
+                                </div>
+                                )}
                             <p className="text-gray-600">
                                 Bienvenido, Administrador. En este sistema, puedes realizar las
                                 siguientes gestiones:

@@ -4,15 +4,54 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import Modal from "@/app/modal/modal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const LibrariesList = () => {
+  
   const [libraries, setLibraries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  
+
   const [newLibrary, setNewLibrary] = useState({
     name: "",
     address: "",
+  });
+  const validateInput = (name, value) => {
+    if (name === "email") {
+      const emailRegex = /^[a-zA-Z0-9@.]*$/;
+      return emailRegex.test(value);
+    }
+
+    if (name === "firstName" || name === "lastName" || name === "password") {
+      const textRegex = /^[a-zA-Z0-9]{0,10}$/;
+      return textRegex.test(value);
+    }
+
+    return true;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (validateInput(name, value)) {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    libraryId: "",
+    password: "",
+    confirmPassword: "",
+    userType: "admin",
   });
 
   const [editLibrary, setEditLibrary] = useState(null);
@@ -28,7 +67,6 @@ const LibrariesList = () => {
       setLibraries(response.data);
     } catch (err) {
       console.error("Error al cargar las bibliotecas:", err);
-      setError("No se pudieron cargar las bibliotecas. Intenta nuevamente.");
     } finally {
       setLoading(false);
     }
@@ -38,18 +76,59 @@ const LibrariesList = () => {
     fetchLibraries();
   }, []);
 
+  
+
   const handleCreateLibrary = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
+  
     try {
-      const response = await axios.post("http://localhost:4000/api/libraries", newLibrary);
-      setLibraries([...libraries, response.data]);
+      // 1. Crear la biblioteca
+      const libraryRes = await axios.post("http://localhost:4000/api/libraries", newLibrary);
+      const newLibraryId = libraryRes.data.id;
+  
+      // 2. Validar los datos del usuario (quitamos libraryId porque ya no lo necesitamos del form)
+      const { firstName, lastName, email, password, confirmPassword } = formData;
+      if (!firstName || !lastName || !email || !password || !confirmPassword) {
+        setError("Por favor, completa todos los campos.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError("Las contraseñas no coinciden.");
+        return;
+      }
+  
+      // 3. Crear el usuario usando el ID de la biblioteca recién creada
+      const userRes = await axios.post("http://localhost:4000/api/users", {
+        ...formData,
+        libraryId: newLibraryId, // Usamos el ID que acabamos de obtener
+      });
+      if (userRes.status === 201) {
+        alert("Usuario registrado con éxito.");
+      }
+  
+      // 4. Actualizar estado de bibliotecas y limpiar formularios
+      setLibraries([...libraries, libraryRes.data]);
       setNewLibrary({ name: "", address: "" });
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        // libraryId: "" // Si quieres lo puedes eliminar completamente
+      });
       setCreateModalOpen(false);
+  
     } catch (err) {
-      console.error("Error al crear la biblioteca:", err);
-      setError("No se pudo crear la biblioteca.");
+      console.error("Error al crear la biblioteca o el usuario:", err);
+      setError(err.response?.data?.error || "No se pudo crear la biblioteca o el usuario.");
+    } finally {
+      setLoading(false);
     }
   };
+  
 
   const handleEditLibrary = async (e) => {
     e.preventDefault();
@@ -147,6 +226,74 @@ const LibrariesList = () => {
               className="p-2 border border-gray-300 rounded-md w-full"
             />
           </div>
+    
+          <div>
+            <Label htmlFor="firstName" className="mb-1">
+              Nombre
+            </Label>
+            <Input
+              type="text"
+              id="firstName"
+              name="firstName"
+              placeholder="Ingresa tu nombre"
+              value={formData.firstName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label htmlFor="lastName" className="mb-1">
+              Apellido
+            </Label>
+            <Input
+              type="text"
+              id="lastName"
+              name="lastName"
+              placeholder="Ingresa tu apellido"
+              value={formData.lastName}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label htmlFor="email" className="mb-1">
+              Correo Electrónico
+            </Label>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Ingresa tu correo"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="password" className="mb-1">
+              Contraseña
+            </Label>
+            <Input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Ingresa tu contraseña"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <Label htmlFor="confirmPassword" className="mb-1">
+              Confirmar Contraseña
+            </Label>
+            <Input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirma tu contraseña"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+            />
+          </div>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <button
             type="submit"
             className="p-2 bg-blue-500 text-white rounded-md"
@@ -180,6 +327,7 @@ const LibrariesList = () => {
               className="p-2 border border-gray-300 rounded-md w-full"
             />
           </div>
+          
           <button
             type="submit"
             className="p-2 bg-blue-500 text-white rounded-md"

@@ -54,12 +54,15 @@ const Register = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    setError("");
+    if (validateInput(name, value)) {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+      setError(""); // Clear error if input becomes valid
+    } else {
+      setError("Algunos campos tienen caracteres no permitidos o exceden el límite.");
+    }
   };
 
   const handleSubmit = async (e) => {
