@@ -32,15 +32,14 @@ const UserManagement: React.FC = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get<User[]>(
-        API_URL,
-        {
-          headers: {
-            Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
-          },
-        }
-      );
-      // Filtrar solo los usuarios activos o suspendidos
+      const response = await axios.get<User[]>(API_URL, {
+        headers: {
+          Authorization: `Bearer your-secret-key`,
+        },
+        params: {
+          libraryId: localStorage.getItem("libraryId"), // <= Envías aquí el libraryId
+        },
+      });
       const filteredUsers = response.data.filter(user => user.status !== 'eliminado');
       setUsers(filteredUsers);
     } catch (err: any) {
@@ -48,7 +47,7 @@ const UserManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   // Manejar cambios en el formulario
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

@@ -75,6 +75,7 @@ const BooksList = () => {
           author: filters.author || undefined, // Filtro por autor
           rangoInicio: filters.rangoInicio || undefined,
           rangoFin: filters.rangoFin || undefined,
+          libraryId: localStorage.getItem("libraryId"), // <= Enviar aquí el libraryId
         },
       });
       setBooks(response.data);
