@@ -12,10 +12,23 @@ const BooksList = () => {
   const [error, setError] = useState(null);
   const [searchTriggered, setSearchTriggered] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [libraryId, setLibraryId] = useState("");
+
+  useEffect(() => {
+    const storedLibraryId = localStorage.getItem("libraryId");
+    if (storedLibraryId) {
+      setLibraryId(storedLibraryId);
+      setNewBook((prevBook) => ({
+        ...prevBook,
+        libraryId: storedLibraryId, // Actualiza el libraryId en newBook
+      }));
+    }
+  }, []);
+  
+
   const [newBook, setNewBook] = useState({
     title: "",              // Título del libro
     author: "",             // Autor del libro
-    isbn: "",               // ISBN del libro
     price: 0.0,             // Precio del libro
     isRented: false,        // Si el libro está rentado
     isLoaned: false,        // Si el libro está prestado
@@ -28,7 +41,6 @@ const BooksList = () => {
   const [filters, setFilters] = useState({
     titulo: "",
     categoria: "",
-    isbn: "",           // Añadido para ISBN
     author: ""          // Añadido para autor
   });
 
@@ -61,7 +73,6 @@ const BooksList = () => {
           titulo: filters.titulo || undefined,
           categoria: filters.categoria || undefined,
           author: filters.author || undefined, // Filtro por autor
-          isbn: filters.isbn || undefined,   // Filtro por ISBN
           rangoInicio: filters.rangoInicio || undefined,
           rangoFin: filters.rangoFin || undefined,
         },
@@ -140,7 +151,7 @@ const BooksList = () => {
         }
       );
       setBooks([...books, response.data]);  // Add the new book to the state
-      setNewBook({ titulo: "", author: "", isbn: "", categoria: "", cantidad: 0 }); // Reset form
+      setNewBook({ titulo: "", author: "", categoria: "", cantidad: 0 }); // Reset form
       setCreateModalOpen(false); // Close modal
     } catch (err) {
       console.error("Error al crear el libro:", err);
@@ -364,17 +375,6 @@ const BooksList = () => {
           </div>
 
           {/* Price */}
-          <div>
-            <label htmlFor="isbn" className="block text-gray-700 font-medium mb-2">Isbn</label>
-            <input
-              id="isbn"
-              name="isbn"
-              placeholder="Isbn"
-              className="p-3 border border-gray-300 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={newBook.isbn}
-              onChange={handleNewBookChange}
-            />
-          </div>
 
           {/* Publication Year */}
           <div>
