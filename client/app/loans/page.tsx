@@ -13,6 +13,7 @@ const BooksList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [userType, setUserType] = useState("");
+  const [libraryId, setLibraryId] = useState("");
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -27,6 +28,9 @@ const BooksList = () => {
     const storedUserType = localStorage.getItem("userType");
     if (storedUserType) setUserType(storedUserType); 
 
+    const storedLibraryId = localStorage.getItem("libraryId");
+    if (storedLibraryId) setLibraryId(storedLibraryId);
+
     fetchBooks();
   }, []);
 
@@ -39,6 +43,9 @@ const BooksList = () => {
           headers: {
             Authorization: `Bearer your-secret-key`, // Token textual directamente en el encabezado
           },
+          params: {
+            libraryId: localStorage.getItem("libraryId"), 
+          }
         }
       );
       setBooks(response.data);
@@ -63,6 +70,7 @@ const BooksList = () => {
           <lib:registerLoanRequest>
             <userId>${userId}</userId>
             <bookId>${bookId}</bookId>
+            <libraryId>${libraryId}</libraryId>
             <loanDate>${loanDate}</loanDate>
             <returnDate>${returnDate}</returnDate>
           </lib:registerLoanRequest>

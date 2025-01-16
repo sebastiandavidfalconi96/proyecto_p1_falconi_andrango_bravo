@@ -8,6 +8,7 @@ interface Loan {
   id: string;
   userId: string;
   bookId: string;
+  libraryId: string;
   loanDate: string;
   returnDate: string;
   status: string;
@@ -58,6 +59,7 @@ const History = () => {
           id: loan.getElementsByTagName("id")[0]?.textContent || "",
           userId: loan.getElementsByTagName("userId")[0]?.textContent || "",
           bookId: loan.getElementsByTagName("bookId")[0]?.textContent || "",
+          libraryId: loan.getElementsByTagName("libraryId")[0]?.textContent || "",
           loanDate: loan.getElementsByTagName("loanDate")[0]?.textContent || "",
           returnDate: loan.getElementsByTagName("returnDate")[0]?.textContent || "",
           status: loan.getElementsByTagName("status")[0]?.textContent || "",
@@ -93,6 +95,7 @@ const History = () => {
               <th className="p-2 border">Fecha de Préstamo</th>
               <th className="p-2 border">Fecha de Devolución</th>
               <th className="p-2 border">Estado</th>
+              <th className="p-2 border">ID Biblioteca</th>
             </tr>
           </thead>
           <tbody>
@@ -106,6 +109,7 @@ const History = () => {
                 <td className={`p-2 border ${loan.status === "active" ? "text-green-500" : "text-orange-500"}`}>
                   {loan.status}
                 </td>
+                <td className="p-2 border">{loan.libraryId || "No registrado"}</td>
               </tr>
             ))}
           </tbody>
