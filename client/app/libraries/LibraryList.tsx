@@ -14,12 +14,13 @@ const LibrariesList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  
-
   const [newLibrary, setNewLibrary] = useState({
     name: "",
     address: "",
+    subscription: "",
+    status: "ACTIVE",
   });
+
   const validateInput = (name, value) => {
     if (name === "email") {
       const emailRegex = /^[a-zA-Z0-9@.]*$/;
@@ -110,7 +111,7 @@ const LibrariesList = () => {
   
       // 4. Actualizar estado de bibliotecas y limpiar formularios
       setLibraries([...libraries, libraryRes.data]);
-      setNewLibrary({ name: "", address: "" });
+      setNewLibrary({ name: "", address: "", subscription: "", status: ""});
       setFormData({
         firstName: "",
         lastName: "",
@@ -179,6 +180,8 @@ const LibrariesList = () => {
             </CardHeader>
             <CardContent>
               <CardDescription>{library.address}</CardDescription>
+              <CardDescription>{library.subscription}</CardDescription>
+              <CardDescription>{library.status}</CardDescription>
               <button
                 onClick={() => {
                   setEditLibrary(library);
@@ -206,8 +209,10 @@ const LibrariesList = () => {
       <Modal isOpen={isCreateModalOpen} onClose={() => setCreateModalOpen(false)}>
         <h2 className="text-2xl font-bold mb-4">Crear Biblioteca</h2>
         <form onSubmit={handleCreateLibrary} className="space-y-4">
+          <h1><b>Datos Biblioteca</b></h1>
           <div>
-            <label className="block text-sm font-medium">Nombre</label>
+            
+            <label className="block text-sm font-medium">Nombre Biblioteca</label>
             <input
               type="text"
               name="name"
@@ -226,8 +231,24 @@ const LibrariesList = () => {
               className="p-2 border border-gray-300 rounded-md w-full"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium">Tiempo Subscripción</label>
+            <select
+              name="subscription"
+              value={newLibrary.subscription}
+              onChange={(e) => setNewLibrary({ ...newLibrary, subscription: e.target.value })}
+              className="p-2 border border-gray-300 rounded-md w-full"
+            >
+              <option value="">Selecciona una opción</option>
+              <option value="3 meses">3 meses</option>
+              <option value="6 meses">6 meses</option>
+              <option value="12 meses">12 meses</option>
+            </select>
+          </div>
     
           <div>
+
+          <h1><b>Datos Administrador</b></h1>
             <Label htmlFor="firstName" className="mb-1">
               Nombre
             </Label>
