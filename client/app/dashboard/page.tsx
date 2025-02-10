@@ -43,8 +43,7 @@ const Layout: React.FC = ({ children }) => {
     : userType === "consumer"
     ? [
         { href: "/home", label: "Inicio", icon: <Home className="w-5 h-5" /> },
-        { href: "/loans", label: "Préstamos", icon: <BookOpen className="w-5 h-5" /> },
-        { href: "/history", label: "Historial", icon: <BookOpen className="w-5 h-5" /> },
+        { href: "/openai", label: "Cuentos", icon: <BookOpen className="w-5 h-5" /> },        
       ]: null;
 
   if (loading) {

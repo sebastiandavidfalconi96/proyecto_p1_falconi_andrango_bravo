@@ -124,8 +124,7 @@ const Index = () => {
                                 podrás realizar las siguientes acciones:
                             </p>
                             <ul className="list-disc list-inside space-y-2 text-gray-700">
-                                <li>Gestión de préstamos de libros.</li>
-                                <li>Consulta del historial de préstamos realizados.</li>
+                                <li>Generación de cuentos por IA</li>
                             </ul>
                             <p className="text-sm text-gray-500">
                                 Universidad de las Fuerzas Armadas
